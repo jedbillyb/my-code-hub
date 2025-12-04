@@ -1,6 +1,10 @@
 import { Github, Instagram, Mail } from "lucide-react";
 import SocialLink from "@/components/SocialLink";
 import XIcon from "@/components/icons/XIcon";
+import Navigation, { ScrollIndicator } from "@/components/Navigation";
+import ProjectsSection from "@/components/ProjectsSection";
+import StockPortfolio from "@/components/StockPortfolio";
+import BlogSection from "@/components/BlogSection";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const DiscordIcon = ({ className }: { className?: string }) => (
@@ -40,51 +44,67 @@ const Index = () => {
   ];
 
   return (
-    <main className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Background */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBg})` }}
-      />
+    <div className="min-h-screen bg-background">
+      <Navigation />
       
-      {/* Overlay */}
-      <div className="absolute inset-0 hero-overlay" />
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        {/* Background */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${heroBg})` }}
+        />
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 hero-overlay" />
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-6 text-center">
-        <header className="mb-8">
-          <h1 className="text-5xl md:text-7xl font-heading font-semibold text-foreground tracking-tight fade-in text-glow">
-            Jed Blenkhorn
-          </h1>
-          <p className="mt-4 text-lg md:text-xl text-muted-foreground font-body tracking-wide fade-in-delay-1">
-            Student <span className="mx-2 text-accent">•</span> Developer <span className="mx-2 text-accent">•</span> Stockbroker
-          </p>
-        </header>
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center px-6 text-center">
+          <header className="mb-8">
+            <h1 className="text-5xl md:text-7xl font-heading font-semibold text-foreground tracking-tight fade-in text-glow">
+              Jed Blenkhorn
+            </h1>
+            <p className="mt-4 text-lg md:text-xl text-muted-foreground font-body tracking-wide fade-in-delay-1">
+              Student <span className="mx-2 text-accent">•</span> Developer <span className="mx-2 text-accent">•</span> Stockbroker
+            </p>
+          </header>
 
-        {/* Social Links */}
-        <nav className="fade-in-delay-2" aria-label="Social media links">
-          <ul className="flex items-center gap-4">
-            {socialLinks.map((link) => (
-              <li key={link.label}>
-                <SocialLink
-                  href={link.href}
-                  label={link.label}
-                  icon={link.icon}
-                  external={link.external}
-                />
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+          {/* Social Links */}
+          <nav className="fade-in-delay-2" aria-label="Social media links">
+            <ul className="flex items-center gap-4">
+              {socialLinks.map((link) => (
+                <li key={link.label}>
+                  <SocialLink
+                    href={link.href}
+                    label={link.label}
+                    icon={link.icon}
+                    external={link.external}
+                  />
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+
+        <ScrollIndicator />
+      </section>
+
+      {/* Projects Section */}
+      <ProjectsSection />
+
+      {/* Stock Portfolio Section */}
+      <StockPortfolio />
+
+      {/* Blog Section */}
+      <BlogSection />
 
       {/* Footer */}
-      <footer className="absolute bottom-6 left-0 right-0 text-center fade-in-delay-3">
+      <footer className="py-8 text-center border-t border-border/30">
         <p className="text-sm text-muted-foreground/60">
           &copy; Jed Blenkhorn 2025
         </p>
       </footer>
-    </main>
+    </div>
   );
 };
 
