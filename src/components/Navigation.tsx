@@ -1,5 +1,6 @@
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import LocalClock from "@/components/LocalClock";
 
 interface NavItem {
   label: string;
@@ -43,7 +44,7 @@ const Navigation = () => {
           >
             {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-          <div className="hidden md:flex items-center gap-8 bg-card/30 backdrop-blur-md border border-border/30 rounded-full px-6 py-2">
+          <div className="hidden md:flex items-center gap-8 bg-card/50 backdrop-blur-md border border-border/40 rounded-full px-6 py-2">
             {navItems.map((item) => (
               <button
                 key={item.label}
@@ -56,9 +57,14 @@ const Navigation = () => {
           </div>
         </div>
 
+        {/* Local Clock - Desktop */}
+        <div className="hidden md:block bg-card/50 backdrop-blur-md border border-border/40 rounded-full px-4 py-2">
+          <LocalClock />
+        </div>
+
         {/* Mobile menu */}
         <div
-          className={`absolute left-4 right-4 top-16 bg-card/60 backdrop-blur-md border border-border/30 rounded-xl p-4 shadow-lg md:hidden ${open ? "block" : "hidden"}`}
+          className={`absolute left-4 right-4 top-16 bg-card/80 backdrop-blur-md border border-border/40 rounded-xl p-4 shadow-lg md:hidden ${open ? "block" : "hidden"}`}
           role="menu"
         >
           <ul className="flex flex-col gap-3">
@@ -66,13 +72,16 @@ const Navigation = () => {
               <li key={item.label}>
                 <button
                   onClick={() => scrollToSection(item.href)}
-                  className="w-full text-left px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-colors text-base font-medium"
+                  className="w-full text-left px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors text-base font-medium"
                 >
                   {item.label}
                 </button>
               </li>
             ))}
           </ul>
+          <div className="mt-4 pt-4 border-t border-border/30">
+            <LocalClock />
+          </div>
         </div>
       </div>
     </nav>
