@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "SPA routing configuration for Cloudflare Pages",
+  "description": "SPA routing - serve index.html for all routes except static assets",
   "include": ["/*"],
-  "exclude": ["/assets/*", "/og-image.svg", "/favicon.ico", "/robots.txt"]
+  "exclude": ["/assets/*", "/*.ico", "/*.svg", "/*.txt", "/*.json"]
 }
