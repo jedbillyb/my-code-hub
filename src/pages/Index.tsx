@@ -5,6 +5,7 @@ import Navigation, { ScrollIndicator } from "@/components/Navigation";
 import ProjectsSection from "@/components/ProjectsSection";
 import StockPortfolio from "@/components/StockPortfolio";
 import BlogSection from "@/components/BlogSection";
+import Footer from "@/components/Footer";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const DiscordIcon = ({ className }: { className?: string }) => (
@@ -109,11 +110,7 @@ const Index = () => {
       <BlogSection />
 
       {/* Footer */}
-      <footer className="py-8 text-center border-t border-border/30">
-        <p className="text-sm text-muted-foreground/60">
-          &copy; Jed Blenkhorn 2025
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 };

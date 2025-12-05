@@ -38,73 +38,61 @@ const projects: Project[] = [
   },
 ];
 
-const ProjectCard = ({ project }: { project: Project }) => {
-  const href = project.live ?? project.github;
-
-  const Inner = (
-    <Card className="bg-card/50 border-border/50 backdrop-blur-sm hover:border-accent/50 transition-all duration-300 group cursor-pointer min-h-[200px] card-hover">
-      {project.thumbnail && (
-        <div
-          className="card-image rounded-t-md"
-          style={{ backgroundImage: `url(${project.thumbnail})` }}
-          role="img"
-          aria-label={`${project.title} thumbnail`}
-        />
-      )}
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-lg font-heading text-foreground group-hover:text-accent transition-colors">
-            {project.title}
-          </CardTitle>
-          <div className="flex gap-2">
-            {project.github && (
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-accent transition-colors"
-                aria-label={`View ${project.title} on GitHub`}
-              >
-                <Github className="w-5 h-5" />
-              </a>
-            )}
-            {project.live && (
-              <a
-                href={project.live}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-accent transition-colors"
-                aria-label={`View ${project.title} live`}
-              >
-                <ExternalLink className="w-5 h-5" />
-              </a>
-            )}
-          </div>
+const ProjectCard = ({ project }: { project: Project }) => (
+  <Card className="bg-card/60 border-border/50 backdrop-blur-sm hover:border-accent/50 transition-all duration-300 group min-h-[200px] card-hover">
+    {project.thumbnail && (
+      <div
+        className="card-image rounded-t-md"
+        style={{ backgroundImage: `url(${project.thumbnail})` }}
+        role="img"
+        aria-label={`${project.title} thumbnail`}
+      />
+    )}
+    <CardHeader>
+      <div className="flex items-start justify-between">
+        <CardTitle className="text-lg font-heading text-foreground group-hover:text-accent transition-colors">
+          {project.title}
+        </CardTitle>
+        <div className="flex gap-2">
+          {project.github && (
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-accent transition-colors z-10"
+              aria-label={`View ${project.title} on GitHub`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Github className="w-5 h-5" />
+            </a>
+          )}
+          {project.live && (
+            <a
+              href={project.live}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-accent transition-colors z-10"
+              aria-label={`View ${project.title} live`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ExternalLink className="w-5 h-5" />
+            </a>
+          )}
         </div>
-        <CardDescription className="text-muted-foreground">{project.description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="bg-secondary/50 text-secondary-foreground">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  if (href) {
-    return (
-      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`Open ${project.title}`} className="block">
-        {Inner}
-      </a>
-    );
-  }
-
-  return Inner;
-};
+      </div>
+      <CardDescription className="text-muted-foreground">{project.description}</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-wrap gap-2">
+        {project.tags.map((tag) => (
+          <Badge key={tag} variant="secondary" className="bg-secondary/50 text-secondary-foreground">
+            {tag}
+          </Badge>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+);
 
 const ProjectsSection = () => {
   return (

@@ -10,62 +10,68 @@
 
 @layer base {
   :root {
-    --background: 220 25% 8%;
-    --foreground: 210 20% 95%;
+    /* Lighter dark theme - more contrast and visual interest */
+    --background: 220 20% 11%;
+    --foreground: 210 25% 98%;
 
-    --card: 220 20% 12%;
-    --card-foreground: 210 20% 95%;
+    --card: 220 18% 15%;
+    --card-foreground: 210 25% 98%;
 
-    --popover: 220 20% 12%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 220 18% 15%;
+    --popover-foreground: 210 25% 98%;
 
-    --primary: 200 80% 60%;
+    --primary: 200 85% 55%;
     --primary-foreground: 220 25% 8%;
 
-    --secondary: 220 15% 20%;
-    --secondary-foreground: 210 20% 85%;
+    --secondary: 220 15% 22%;
+    --secondary-foreground: 210 20% 90%;
 
-    --muted: 220 15% 18%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 220 15% 20%;
+    --muted-foreground: 215 15% 65%;
 
-    --accent: 200 60% 50%;
-    --accent-foreground: 210 20% 95%;
+    --accent: 200 70% 55%;
+    --accent-foreground: 210 25% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 15% 22%;
-    --input: 220 15% 22%;
-    --ring: 200 80% 60%;
+    --border: 220 15% 26%;
+    --input: 220 15% 26%;
+    --ring: 200 85% 55%;
 
     --radius: 0.5rem;
 
     /* Custom tokens */
     --hero-overlay: 220 25% 5%;
-    --social-hover: 200 80% 60%;
-    --text-glow: 200 80% 70%;
+    --social-hover: 200 85% 55%;
+    --text-glow: 200 85% 65%;
+    
+    /* Gradient tokens */
+    --gradient-start: 220 20% 11%;
+    --gradient-mid: 220 18% 14%;
+    --gradient-end: 215 20% 16%;
   }
 
   .dark {
-    --background: 220 25% 8%;
-    --foreground: 210 20% 95%;
-    --card: 220 20% 12%;
-    --card-foreground: 210 20% 95%;
-    --popover: 220 20% 12%;
-    --popover-foreground: 210 20% 95%;
-    --primary: 200 80% 60%;
+    --background: 220 20% 11%;
+    --foreground: 210 25% 98%;
+    --card: 220 18% 15%;
+    --card-foreground: 210 25% 98%;
+    --popover: 220 18% 15%;
+    --popover-foreground: 210 25% 98%;
+    --primary: 200 85% 55%;
     --primary-foreground: 220 25% 8%;
-    --secondary: 220 15% 20%;
-    --secondary-foreground: 210 20% 85%;
-    --muted: 220 15% 18%;
-    --muted-foreground: 215 15% 55%;
-    --accent: 200 60% 50%;
-    --accent-foreground: 210 20% 95%;
+    --secondary: 220 15% 22%;
+    --secondary-foreground: 210 20% 90%;
+    --muted: 220 15% 20%;
+    --muted-foreground: 215 15% 65%;
+    --accent: 200 70% 55%;
+    --accent-foreground: 210 25% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 220 15% 22%;
-    --input: 220 15% 22%;
-    --ring: 200 80% 60%;
+    --border: 220 15% 26%;
+    --input: 220 15% 26%;
+    --ring: 200 85% 55%;
   }
 }
 
@@ -118,9 +124,18 @@
   .hero-overlay {
     background: linear-gradient(
       180deg,
-      hsl(var(--hero-overlay) / 0.6) 0%,
-      hsl(var(--hero-overlay) / 0.8) 50%,
-      hsl(var(--hero-overlay) / 0.95) 100%
+      hsl(var(--hero-overlay) / 0.5) 0%,
+      hsl(var(--hero-overlay) / 0.75) 50%,
+      hsl(var(--hero-overlay) / 0.92) 100%
+    );
+  }
+
+  .section-gradient {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--gradient-start)) 0%,
+      hsl(var(--gradient-mid)) 50%,
+      hsl(var(--gradient-end)) 100%
     );
   }
 

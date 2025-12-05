@@ -1,7 +1,7 @@
 import { TrendingUp, TrendingDown, DollarSign, PieChart, Eye, Newspaper } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RechartsPie, Pie, Cell } from "recharts";
+import MarketClocks from "@/components/MarketClocks";
 
 // Mock data - replace with real API data
 const portfolioValue = 24567.89;
@@ -211,45 +211,47 @@ const StockPortfolio = () => {
             </CardContent>
           </Card>
 
-          {/* Watchlist & News */}
-          <div className="space-y-6">
-            <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="font-heading flex items-center gap-2">
-                  <Eye className="w-4 h-4" /> Watchlist
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {watchlist.map((stock) => (
-                  <div key={stock.symbol} className="flex justify-between items-center">
-                    <span className="font-medium text-foreground">{stock.symbol}</span>
-                    <div className="text-right">
-                      <div className="text-foreground">${stock.price}</div>
-                      <div className={`text-xs ${stock.change >= 0 ? "text-green-500" : "text-red-500"}`}>
-                        {stock.change >= 0 ? "+" : ""}{stock.change}%
-                      </div>
+        {/* Watchlist, News & Market Clocks */}
+        <div className="space-y-6">
+          <MarketClocks />
+          
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="font-heading flex items-center gap-2">
+                <Eye className="w-4 h-4" /> Watchlist
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {watchlist.map((stock) => (
+                <div key={stock.symbol} className="flex justify-between items-center">
+                  <span className="font-medium text-foreground">{stock.symbol}</span>
+                  <div className="text-right">
+                    <div className="text-foreground">${stock.price}</div>
+                    <div className={`text-xs ${stock.change >= 0 ? "text-green-500" : "text-red-500"}`}>
+                      {stock.change >= 0 ? "+" : ""}{stock.change}%
                     </div>
                   </div>
-                ))}
-              </CardContent>
-            </Card>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
 
-            <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="font-heading flex items-center gap-2">
-                  <Newspaper className="w-4 h-4" /> Market News
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {news.map((item, i) => (
-                  <div key={i} className="border-b border-border/30 last:border-0 pb-3 last:pb-0">
-                    <p className="text-sm text-foreground">{item.title}</p>
-                    <span className="text-xs text-muted-foreground">{item.time}</span>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="font-heading flex items-center gap-2">
+                <Newspaper className="w-4 h-4" /> Market News
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {news.map((item, i) => (
+                <div key={i} className="border-b border-border/30 last:border-0 pb-3 last:pb-0">
+                  <p className="text-sm text-foreground">{item.title}</p>
+                  <span className="text-xs text-muted-foreground">{item.time}</span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
         </div>
       </div>
     </section>
