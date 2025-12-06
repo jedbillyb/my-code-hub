@@ -24,6 +24,23 @@ serve(async (req) => {
 
     console.log('Fetching prices for symbols:', symbols);
 
+    // Fetch USD to NZD exchange rate
+    let usdToNzd = 1.70; // fallback rate
+    try {
+      const forexResponse = await fetch(
+        `https://finnhub.io/api/v1/forex/rates?base=USD&token=${FINNHUB_API_KEY}`
+      );
+      if (forexResponse.ok) {
+        const forexData = await forexResponse.json();
+        if (forexData.quote?.NZD) {
+          usdToNzd = forexData.quote.NZD;
+          console.log('USD to NZD rate:', usdToNzd);
+        }
+      }
+    } catch (forexError) {
+      console.error('Error fetching forex rate, using fallback:', forexError);
+    }
+
     // Fetch quotes for all symbols in parallel
     const quotePromises = symbols.map(async (symbol: string) => {
       try {
@@ -57,7 +74,7 @@ serve(async (req) => {
 
     const quotes = await Promise.all(quotePromises);
 
-    return new Response(JSON.stringify({ quotes }), {
+    return new Response(JSON.stringify({ quotes, usdToNzd }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {

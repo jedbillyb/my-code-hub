@@ -18,6 +18,7 @@ interface UseStockPricesResult {
   loading: boolean;
   error: string | null;
   lastUpdated: Date | null;
+  usdToNzd: number;
   refetch: () => Promise<void>;
 }
 
@@ -29,6 +30,7 @@ export const useStockPrices = (
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [usdToNzd, setUsdToNzd] = useState(1.70);
 
   const fetchPrices = useCallback(async () => {
     if (symbols.length === 0) return;
@@ -54,6 +56,11 @@ export const useStockPrices = (
         setLastUpdated(new Date());
         console.log('Stock prices updated:', quotesMap);
       }
+
+      if (data?.usdToNzd) {
+        setUsdToNzd(data.usdToNzd);
+        console.log('USD to NZD rate:', data.usdToNzd);
+      }
     } catch (err) {
       console.error('Error fetching stock prices:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch prices');
@@ -69,5 +76,5 @@ export const useStockPrices = (
     return () => clearInterval(interval);
   }, [fetchPrices, refreshInterval]);
 
-  return { quotes, loading, error, lastUpdated, refetch: fetchPrices };
+  return { quotes, loading, error, lastUpdated, usdToNzd, refetch: fetchPrices };
 };

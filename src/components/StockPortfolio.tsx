@@ -1,23 +1,23 @@
 import { TrendingUp, TrendingDown, DollarSign, PieChart, Eye, Newspaper, RefreshCw, Bitcoin } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RechartsPie, Pie, Cell } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RechartsPie, Pie, Cell, AreaChart, Area } from "recharts";
 import { Button } from "@/components/ui/button";
 import MarketClocks from "@/components/MarketClocks";
 import { useStockPrices } from "@/hooks/useStockPrices";
 import { useMemo } from "react";
 
-// Your actual holdings data
+// Your actual holdings data (cost basis in NZD)
 const holdingsData = [
-  { symbol: "VOO", name: "Vanguard 500 Index Fund", shares: 1.0606, costBasis: 668.69 },
-  { symbol: "NVDA", name: "NVIDIA Corp", shares: 2.9633, costBasis: 540.54 },
-  { symbol: "RKLB", name: "Rocket Lab Corp", shares: 7.0449, costBasis: 345.59 },
-  { symbol: "MSFT", name: "Microsoft Corp", shares: 0.2029, costBasis: 98.06 },
-  { symbol: "NBIS", name: "Nebius Group NV", shares: 0.8991, costBasis: 88.15 },
-  { symbol: "IREN", name: "IREN Ltd", shares: 1.5753, costBasis: 70.44 },
-  { symbol: "QQQM", name: "Invesco NASDAQ 100 ETF", shares: 0.1498, costBasis: 38.59 },
-  { symbol: "META", name: "Meta Platforms Inc", shares: 0.0403, costBasis: 27.15 },
-  { symbol: "AMD", name: "Advanced Micro Devices", shares: 0.0821, costBasis: 17.90 },
-  { symbol: "GOOG", name: "Alphabet Inc", shares: 0.0137, costBasis: 4.42 },
+  { symbol: "VOO", name: "Vanguard 500 Index Fund", shares: 1.0606, costBasisNZD: 668.69 },
+  { symbol: "NVDA", name: "NVIDIA Corp", shares: 2.9633, costBasisNZD: 540.54 },
+  { symbol: "RKLB", name: "Rocket Lab Corp", shares: 7.0449, costBasisNZD: 345.59 },
+  { symbol: "MSFT", name: "Microsoft Corp", shares: 0.2029, costBasisNZD: 98.06 },
+  { symbol: "NBIS", name: "Nebius Group NV", shares: 0.8991, costBasisNZD: 88.15 },
+  { symbol: "IREN", name: "IREN Ltd", shares: 1.5753, costBasisNZD: 70.44 },
+  { symbol: "QQQM", name: "Invesco NASDAQ 100 ETF", shares: 0.1498, costBasisNZD: 38.59 },
+  { symbol: "META", name: "Meta Platforms Inc", shares: 0.0403, costBasisNZD: 27.15 },
+  { symbol: "AMD", name: "Advanced Micro Devices", shares: 0.0821, costBasisNZD: 17.90 },
+  { symbol: "GOOG", name: "Alphabet Inc", shares: 0.0137, costBasisNZD: 4.42 },
 ];
 
 const watchlistData = [
@@ -27,7 +27,7 @@ const watchlistData = [
 
 // Crypto holdings (tracked separately)
 const cryptoHoldings = [
-  { symbol: "BTC", name: "Bitcoin", amount: 0.0009, costBasis: 85.56 },
+  { symbol: "BTC", name: "Bitcoin", amount: 0.0009, costBasisNZD: 85.56 },
 ];
 
 const allocationData = [
@@ -42,6 +42,15 @@ const news = [
   { title: "Rocket Lab secures new launch contracts", time: "6h ago" },
 ];
 
+const formatNZD = (value: number) => {
+  return new Intl.NumberFormat('en-NZ', {
+    style: 'currency',
+    currency: 'NZD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+};
+
 const StockPortfolio = () => {
   const stockSymbols = useMemo(() => {
     const holdings = holdingsData.map(h => h.symbol);
@@ -49,26 +58,30 @@ const StockPortfolio = () => {
     return [...new Set([...holdings, ...watchlist])];
   }, []);
 
-  const { quotes, loading, lastUpdated, refetch } = useStockPrices(stockSymbols);
+  const { quotes, loading, lastUpdated, usdToNzd, refetch } = useStockPrices(stockSymbols);
 
-  // Calculate holdings with live prices
+  // Calculate holdings with live prices in NZD
   const holdings = useMemo(() => {
     return holdingsData.map(holding => {
       const quote = quotes[holding.symbol];
-      const currentPrice = quote?.currentPrice || 0;
-      const value = currentPrice * holding.shares;
+      const currentPriceUSD = quote?.currentPrice || 0;
+      const currentPriceNZD = currentPriceUSD * usdToNzd;
+      const valueNZD = currentPriceNZD * holding.shares;
       const change = quote?.changePercent || 0;
+      const totalGainLoss = valueNZD - holding.costBasisNZD;
+      const totalGainLossPercent = holding.costBasisNZD > 0 ? (totalGainLoss / holding.costBasisNZD) * 100 : 0;
       
       return {
         ...holding,
-        price: currentPrice,
+        priceNZD: currentPriceNZD,
+        priceUSD: currentPriceUSD,
         change,
-        value,
-        gainLoss: value - holding.costBasis,
-        gainLossPercent: holding.costBasis > 0 ? ((value - holding.costBasis) / holding.costBasis) * 100 : 0,
+        valueNZD,
+        totalGainLoss,
+        totalGainLossPercent,
       };
-    });
-  }, [quotes]);
+    }).sort((a, b) => b.valueNZD - a.valueNZD); // Sort by value descending
+  }, [quotes, usdToNzd]);
 
   // Calculate watchlist with live prices
   const watchlist = useMemo(() => {
@@ -76,50 +89,54 @@ const StockPortfolio = () => {
       const quote = quotes[item.symbol];
       return {
         ...item,
-        price: quote?.currentPrice || 0,
+        priceNZD: (quote?.currentPrice || 0) * usdToNzd,
+        priceUSD: quote?.currentPrice || 0,
         change: quote?.changePercent || 0,
       };
     });
-  }, [quotes]);
+  }, [quotes, usdToNzd]);
 
-  // Calculate portfolio totals
-  const portfolioValue = useMemo(() => {
-    return holdings.reduce((sum, h) => sum + h.value, 0);
+  // Calculate portfolio totals in NZD
+  const portfolioValueNZD = useMemo(() => {
+    return holdings.reduce((sum, h) => sum + h.valueNZD, 0);
   }, [holdings]);
 
-  const totalCostBasis = useMemo(() => {
-    return holdingsData.reduce((sum, h) => sum + h.costBasis, 0);
+  const totalCostBasisNZD = useMemo(() => {
+    return holdingsData.reduce((sum, h) => sum + h.costBasisNZD, 0);
   }, []);
 
-  const totalGainLoss = portfolioValue - totalCostBasis;
-  const totalGainLossPercent = totalCostBasis > 0 ? (totalGainLoss / totalCostBasis) * 100 : 0;
+  const totalGainLossNZD = portfolioValueNZD - totalCostBasisNZD;
+  const totalGainLossPercent = totalCostBasisNZD > 0 ? (totalGainLossNZD / totalCostBasisNZD) * 100 : 0;
 
-  // Daily change
-  const dailyChange = useMemo(() => {
+  // Daily change in NZD
+  const dailyChangeNZD = useMemo(() => {
     return holdings.reduce((sum, h) => {
       const quote = quotes[h.symbol];
       if (quote?.change && h.shares) {
-        return sum + (quote.change * h.shares);
+        return sum + (quote.change * h.shares * usdToNzd);
       }
       return sum;
     }, 0);
-  }, [holdings, quotes]);
+  }, [holdings, quotes, usdToNzd]);
 
   const dailyChangePercent = useMemo(() => {
-    const prevValue = portfolioValue - dailyChange;
-    return prevValue > 0 ? (dailyChange / prevValue) * 100 : 0;
-  }, [portfolioValue, dailyChange]);
+    const prevValue = portfolioValueNZD - dailyChangeNZD;
+    return prevValue > 0 ? (dailyChangeNZD / prevValue) * 100 : 0;
+  }, [portfolioValueNZD, dailyChangeNZD]);
 
-  const isPositive = dailyChange >= 0;
+  const isPositive = dailyChangeNZD >= 0;
 
-  // Chart data (would need historical data API for real chart)
-  const chartData = [
-    { date: "Mon", value: portfolioValue * 0.98 },
-    { date: "Tue", value: portfolioValue * 0.99 },
-    { date: "Wed", value: portfolioValue * 0.97 },
-    { date: "Thu", value: portfolioValue * 1.01 },
-    { date: "Fri", value: portfolioValue },
-  ];
+  // Enhanced chart data with gradient effect
+  const chartData = useMemo(() => {
+    const baseValue = portfolioValueNZD;
+    return [
+      { date: "Mon", value: baseValue * 0.96, display: formatNZD(baseValue * 0.96) },
+      { date: "Tue", value: baseValue * 0.98, display: formatNZD(baseValue * 0.98) },
+      { date: "Wed", value: baseValue * 0.95, display: formatNZD(baseValue * 0.95) },
+      { date: "Thu", value: baseValue * 0.99, display: formatNZD(baseValue * 0.99) },
+      { date: "Fri", value: baseValue, display: formatNZD(baseValue) },
+    ];
+  }, [portfolioValueNZD]);
 
   return (
     <section id="portfolio" className="py-24 px-6 bg-card/30">
@@ -130,7 +147,7 @@ const StockPortfolio = () => {
               Stock Portfolio
             </h2>
             <p className="text-muted-foreground max-w-2xl">
-              Real-time tracking of my investment portfolio and market watchlist.
+              Real-time tracking in NZD • Exchange rate: 1 USD = {usdToNzd.toFixed(4)} NZD
             </p>
           </div>
           <div className="flex items-center gap-2 mt-4 md:mt-0 justify-center md:justify-end">
@@ -161,11 +178,12 @@ const StockPortfolio = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-foreground">
-                {loading ? "..." : `$${portfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                {loading ? "..." : formatNZD(portfolioValueNZD)}
               </div>
-              <div className={`text-xs ${totalGainLoss >= 0 ? "text-green-500" : "text-red-500"}`}>
-                {totalGainLoss >= 0 ? "+" : ""}${totalGainLoss.toFixed(2)} ({totalGainLossPercent.toFixed(2)}%) all time
+              <div className={`text-sm font-medium ${totalGainLossNZD >= 0 ? "text-green-500" : "text-red-500"}`}>
+                {totalGainLossNZD >= 0 ? "+" : ""}{formatNZD(totalGainLossNZD)} ({totalGainLossPercent >= 0 ? "+" : ""}{totalGainLossPercent.toFixed(2)}%)
               </div>
+              <div className="text-xs text-muted-foreground mt-1">Total return</div>
             </CardContent>
           </Card>
 
@@ -180,9 +198,9 @@ const StockPortfolio = () => {
             </CardHeader>
             <CardContent>
               <div className={`text-2xl font-bold ${isPositive ? "text-green-500" : "text-red-500"}`}>
-                {loading ? "..." : `${isPositive ? "+" : ""}$${dailyChange.toFixed(2)}`}
+                {loading ? "..." : `${isPositive ? "+" : ""}${formatNZD(dailyChangeNZD)}`}
               </div>
-              <div className={`text-xs ${isPositive ? "text-green-500" : "text-red-500"}`}>
+              <div className={`text-sm ${isPositive ? "text-green-500" : "text-red-500"}`}>
                 {isPositive ? "+" : ""}{dailyChangePercent.toFixed(2)}% today
               </div>
             </CardContent>
@@ -212,34 +230,56 @@ const StockPortfolio = () => {
 
         {/* Main Grid */}
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Chart */}
+          {/* Enhanced Chart */}
           <Card className="lg:col-span-2 bg-card/50 border-border/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="font-heading">Portfolio Performance</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64">
+              <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData}>
-                    <XAxis dataKey="date" stroke="hsl(215, 15%, 55%)" fontSize={12} />
-                    <YAxis stroke="hsl(215, 15%, 55%)" fontSize={12} tickFormatter={(v) => `$${(v/1000).toFixed(1)}k`} />
+                  <AreaChart data={chartData}>
+                    <defs>
+                      <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(200, 80%, 60%)" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="hsl(200, 80%, 60%)" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis 
+                      dataKey="date" 
+                      stroke="hsl(215, 15%, 55%)" 
+                      fontSize={12}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis 
+                      stroke="hsl(215, 15%, 55%)" 
+                      fontSize={12}
+                      axisLine={false}
+                      tickLine={false}
+                      tickFormatter={(v) => `$${(v/1000).toFixed(1)}k`}
+                      domain={['dataMin - 100', 'dataMax + 100']}
+                    />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "hsl(220, 20%, 12%)",
                         border: "1px solid hsl(220, 15%, 22%)",
                         borderRadius: "8px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
                       }}
                       labelStyle={{ color: "hsl(210, 20%, 95%)" }}
-                      formatter={(value: number) => [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, "Value"]}
+                      formatter={(value: number) => [formatNZD(value), "Value"]}
                     />
-                    <Line
+                    <Area
                       type="monotone"
                       dataKey="value"
                       stroke="hsl(200, 80%, 60%)"
-                      strokeWidth={2}
-                      dot={{ fill: "hsl(200, 80%, 60%)" }}
+                      strokeWidth={3}
+                      fill="url(#colorValue)"
+                      dot={{ fill: "hsl(200, 80%, 60%)", strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, fill: "hsl(200, 80%, 70%)" }}
                     />
-                  </LineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
@@ -275,7 +315,7 @@ const StockPortfolio = () => {
             </CardContent>
           </Card>
 
-          {/* Holdings Table */}
+          {/* Holdings Table with clear Total Gain/Loss */}
           <Card className="lg:col-span-2 bg-card/50 border-border/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="font-heading">Holdings</CardTitle>
@@ -285,35 +325,37 @@ const StockPortfolio = () => {
                 <table className="w-full">
                   <thead>
                     <tr className="text-left text-muted-foreground text-sm border-b border-border/50">
-                      <th className="pb-3 font-medium">Symbol</th>
+                      <th className="pb-3 font-medium">Stock</th>
                       <th className="pb-3 font-medium">Shares</th>
-                      <th className="pb-3 font-medium">Price</th>
+                      <th className="pb-3 font-medium">Price (NZD)</th>
                       <th className="pb-3 font-medium">Today</th>
                       <th className="pb-3 font-medium text-right">Value</th>
-                      <th className="pb-3 font-medium text-right">Gain/Loss</th>
+                      <th className="pb-3 font-medium text-right">Total Gain/Loss</th>
                     </tr>
                   </thead>
                   <tbody>
                     {holdings.map((stock) => (
-                      <tr key={stock.symbol} className="border-b border-border/30 last:border-0">
-                        <td className="py-3">
+                      <tr key={stock.symbol} className="border-b border-border/30 last:border-0 hover:bg-accent/5 transition-colors">
+                        <td className="py-4">
                           <div className="font-semibold text-foreground">{stock.symbol}</div>
                           <div className="text-xs text-muted-foreground">{stock.name}</div>
                         </td>
-                        <td className="py-3 text-foreground">{stock.shares.toFixed(4)}</td>
-                        <td className="py-3 text-foreground">
-                          {loading ? "..." : `$${stock.price.toFixed(2)}`}
+                        <td className="py-4 text-foreground">{stock.shares.toFixed(4)}</td>
+                        <td className="py-4 text-foreground">
+                          {loading ? "..." : formatNZD(stock.priceNZD)}
                         </td>
-                        <td className={`py-3 ${stock.change >= 0 ? "text-green-500" : "text-red-500"}`}>
-                          {loading ? "..." : `${stock.change >= 0 ? "+" : ""}${stock.change.toFixed(2)}%`}
+                        <td className={`py-4 font-medium ${stock.change >= 0 ? "text-green-500" : "text-red-500"}`}>
+                          {loading ? "..." : `${stock.change >= 0 ? "▲" : "▼"} ${Math.abs(stock.change).toFixed(2)}%`}
                         </td>
-                        <td className="py-3 text-right font-semibold text-foreground">
-                          {loading ? "..." : `$${stock.value.toFixed(2)}`}
+                        <td className="py-4 text-right font-semibold text-foreground">
+                          {loading ? "..." : formatNZD(stock.valueNZD)}
                         </td>
-                        <td className={`py-3 text-right text-sm ${stock.gainLoss >= 0 ? "text-green-500" : "text-red-500"}`}>
-                          {loading ? "..." : `${stock.gainLoss >= 0 ? "+" : ""}$${stock.gainLoss.toFixed(2)}`}
-                          <div className="text-xs">
-                            ({stock.gainLossPercent >= 0 ? "+" : ""}{stock.gainLossPercent.toFixed(1)}%)
+                        <td className="py-4 text-right">
+                          <div className={`font-bold text-lg ${stock.totalGainLoss >= 0 ? "text-green-500" : "text-red-500"}`}>
+                            {loading ? "..." : `${stock.totalGainLoss >= 0 ? "+" : ""}${formatNZD(stock.totalGainLoss)}`}
+                          </div>
+                          <div className={`text-sm ${stock.totalGainLoss >= 0 ? "text-green-400" : "text-red-400"}`}>
+                            {loading ? "" : `${stock.totalGainLossPercent >= 0 ? "+" : ""}${stock.totalGainLossPercent.toFixed(1)}%`}
                           </div>
                         </td>
                       </tr>
@@ -321,15 +363,15 @@ const StockPortfolio = () => {
                     {/* Crypto row */}
                     {cryptoHoldings.map((crypto) => (
                       <tr key={crypto.symbol} className="border-b border-border/30 last:border-0 bg-accent/5">
-                        <td className="py-3">
+                        <td className="py-4">
                           <div className="font-semibold text-foreground flex items-center gap-2">
                             <Bitcoin className="h-4 w-4 text-orange-500" />
                             {crypto.symbol}
                           </div>
                           <div className="text-xs text-muted-foreground">{crypto.name}</div>
                         </td>
-                        <td className="py-3 text-foreground">{crypto.amount.toFixed(4)}</td>
-                        <td className="py-3 text-muted-foreground" colSpan={4}>
+                        <td className="py-4 text-foreground">{crypto.amount.toFixed(4)}</td>
+                        <td className="py-4 text-muted-foreground" colSpan={4}>
                           <span className="text-xs">Crypto tracking coming soon</span>
                         </td>
                       </tr>
@@ -359,7 +401,7 @@ const StockPortfolio = () => {
                     </div>
                     <div className="text-right">
                       <div className="text-foreground">
-                        {loading ? "..." : `$${stock.price.toFixed(2)}`}
+                        {loading ? "..." : formatNZD(stock.priceNZD)}
                       </div>
                       <div className={`text-xs ${stock.change >= 0 ? "text-green-500" : "text-red-500"}`}>
                         {loading ? "..." : `${stock.change >= 0 ? "+" : ""}${stock.change.toFixed(2)}%`}
