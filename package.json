@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@vitejs/plugin-react-swc": "^4.2.2",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1"
-  }
-}
