@@ -1,149 +1,22 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<title>Jed Blenkhorn</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<meta name="description" content="Jed Blenkhorn - Student, Developer, and Stockbroker. Personal portfolio showcasing blogs, services, and projects." />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-0HF8W9QZZ9"></script>
-		<script>
-		  window.dataLayer = window.dataLayer || [];
-		  function gtag(){dataLayer.push(arguments);}
-		  gtag('js', new Date());
-		  gtag('config', 'G-0HF8W9QZZ9');
-		</script>
-	</head>
-	<body class="is-preload">
-		<div id="wrapper">
-			<div id="bg"></div>
-			<div id="overlay"></div>
-
-			<!-- Top Navigation Bar -->
-			<nav id="topnav">
-				<div class="nav-left">
-					<a href="/" class="nav-brand">Jed Blenkhorn</a>
-				</div>
-				<div class="nav-center">
-					<ul class="nav-links">
-						<li><a href="/">Home</a></li>
-						<li><a href="/blog">Blog</a></li>
-						<li><a href="/services">Services</a></li>
-						<li><a href="/projects">Projects</a></li>
-					</ul>
-				</div>
-				<div class="nav-right">
-					<span id="local-time"></span>
-				</div>
-			</nav>
-
-			<div id="main">
-				<!-- Header - Centered Name & Contacts -->
-				<header id="header">
-					<h1>Jed Blenkhorn</h1>
-					<p>Student &nbsp;&bull;&nbsp; Developer &nbsp;&bull;&nbsp; Stockbroker</p>
-					<nav>
-						<ul class="social-icons">
-							<li>
-								<a href="https://discord.com/users/1162693800590848030" target="_blank" aria-label="Discord">
-									<img src="assets/discord.svg" alt="Discord" class="social-icon-img" />
-								</a>
-							</li>
-							<li>
-								<a href="https://www.instagram.com/jedbillyb/" target="_blank" aria-label="Instagram">
-									<i class="fab fa-instagram"></i>
-								</a>
-							</li>
-							<li>
-								<a href="mailto:jedbillyb@outlook.com" aria-label="Email">
-									<i class="fas fa-envelope"></i>
-								</a>
-							</li>
-							<li>
-								<a href="https://github.com/jedbillyb" target="_blank" aria-label="GitHub">
-									<i class="fab fa-github"></i>
-								</a>
-							</li>
-							<li>
-								<a href="https://x.com/jedbillyb09" target="_blank" aria-label="X">
-									<i class="icon-x-custom"></i>
-								</a>
-							</li>
-						</ul>
-					</nav>
-				</header>
-
-				<!-- Featured Cards Section -->
-				<section id="featured-cards">
-					<div class="card">
-						<div class="card-label">Featured Blog:</div>
-						<a href="/blog/my-thoughts-on-netflix-stock" class="card-content blog-card">
-							<div class="card-image">
-								<img src="assets/94pwblzk4caf1.jpeg" alt="Netflix Blog" />
-								<span class="card-badge">NETFLIX</span>
-							</div>
-							<div class="card-info">
-								<h3>My thoughts on netflix stock</h3>
-								<p class="card-meta">jedbillyb</p>
-							</div>
-						</a>
-						<a href="/blog" class="card-link">see more blogs</a>
-					</div>
-
-					<div class="card">
-						<div class="card-label">Featured service:</div>
-						<a href="https://discord.gg/faultline" target="_blank" class="card-content service-card">
-							<div class="card-service-info">
-								<h3>Faultline discord server</h3>
-								<p class="card-subtitle">Now</p>
-								<p class="card-subtitle">Faultline</p>
-								<ul class="service-features">
-									<li>✓ Bots and Services</li>
-								</ul>
-							</div>
-						</a>
-						<a href="/services" class="card-link">See more services</a>
-					</div>
-
-					<div class="card">
-						<div class="card-label">Featured Project:</div>
-						<a href="https://github.com/jedbillyb" target="_blank" class="card-content project-card">
-							<div class="card-project-info">
-								<div class="project-icon">🤖</div>
-								<h3>trading bot</h3>
-							</div>
-						</a>
-						<a href="/projects" class="card-link">See more projects</a>
-					</div>
-				</section>
-
-				<!-- Footer -->
-				<footer id="footer">
-					<div class="footer-content">
-						<span class="copyright">&copy; Jed Blenkhorn 2025 | All rights reserved</span>
-						<p class="disclaimer">Disclaimer: This blog is for educational purposes only and does not constitute financial advice. All content reflects personal experience.</p>
-					</div>
-				</footer>
-			</div>
-		</div>
-
-		<script>
-			window.onload = function() { 
-				document.body.classList.remove('is-preload'); 
-				updateClock();
-				setInterval(updateClock, 1000);
-			}
-			window.ontouchmove = function() { return false; }
-			window.onorientationchange = function() { document.body.scrollTop = 0; }
-
-			function updateClock() {
-				const now = new Date();
-				const hours = now.getHours().toString().padStart(2, '0');
-				const minutes = now.getMinutes().toString().padStart(2, '0');
-				document.getElementById('local-time').textContent = hours + ':' + minutes;
-			}
-		</script>
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jed Blenkhorn</title>
+    <meta name="description" content="Jed Blenkhorn - Student, Developer, and Stockbroker. Personal portfolio showcasing blogs, services, and projects." />
+    <link rel="stylesheet" href="/assets/css/fontawesome-all.min.css" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0HF8W9QZZ9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0HF8W9QZZ9');
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
