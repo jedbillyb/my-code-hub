@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@vitejs/plugin-react-swc": "^4.2.2",
+    "autoprefixer": "^10.4.22",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "tailwindcss": "^4.1.17"
+  }
+}
