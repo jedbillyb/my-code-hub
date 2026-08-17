@@ -20,7 +20,7 @@ jobs:
           host: server.jedbillyb.com
           username: ubuntu
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          source: "index.html,favicon.ico,og-image.jpg,assets,extensions"
+          source: "index.html,favicon.ico,og-image.jpg,feed.xml,robots.txt,sitemap.xml,assets,extensions"
           target: "/var/www/html/jedbillyb.com"
 
       - name: Deploy dashboard
